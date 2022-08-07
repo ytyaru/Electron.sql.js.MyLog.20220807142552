@@ -1,8 +1,7 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron')
 const path = require('path')
-//const fs = require('fs')
+const fs = require('fs')
 const initSqlJs = require('sql.js');
-//const initSqlJs = require('sql-wasm.js');
 //const util = require('util')
 //const childProcess = require('child_process');
 const lib = new Map()
@@ -50,58 +49,69 @@ async function loadDb(filePath=`src/db/mylog.db`) {
         const res = db.exec(`select * from comments;`)
         console.log(res)
     }
+    //console.log(lib)
     return lib.get(`DB`)
 }
 
 // ここではdb.execを参照できるが、return後では参照できない謎
-ipcMain.handle('loadDb', async (event, filePath=null) => {
+ipcMain.handle('loadDb', async(event, filePath=null) => {
     console.log('----- loadDb ----- ', filePath)
     return loadDb(filePath)
-    /*
-    if (!lib.has(`SQL`)) {
-        const fs = require('fs')
-        const SQL = await initSqlJs().catch(e=>console.error(e))
-        lib.set(`SQL`, SQL)
-        const db = new SQL.Database(new Uint8Array(fs.readFileSync(filePath)))
-        lib.set(`DB`, db)
-        console.log(db)
-        console.log(db.exec)
-        const res = db.exec(`select * from comments;`)
-        console.log(res)
-    }
-    return db
-    */
-    /*
-    const fs = require('fs')
-    const SQL = await initSqlJs().catch(e=>console.error(e))
-    const db = new SQL.Database(new Uint8Array(fs.readFileSync(filePath)))
-    console.log(db)
-    console.log(db.exec)
-    const res = db.exec(`select * from comments;`)
-    console.log(res)
-    return db
-    */
 })
 // db.execの実行結果を返すならOK
-ipcMain.handle('getComments', async (event, filePath) => {
+ipcMain.handle('get', async(event) => {
+    console.log('----- get ----- ')
     if (!lib.has(`SQL`)) {
         //await ipcRenderer.invoke('loadDb', filePath),
-        loadDb(filePath)
+        loadDb()
     }
-    const res = lib.get(`DB`).exec(`select * from comments;`)
-    console.log(res)
+    //console.log(lib)
+    //console.log(lib.get(`DB`))
+    const res = lib.get(`DB`).exec(`select * from comments order by created desc;`)
+    //console.log(res)
     return res[0].values
-    /*
-    console.log('----- getComments ----- ', filePath)
-    const fs = require('fs')
-    const SQL = await initSqlJs().catch(e=>console.error(e))
-    const db = new SQL.Database(new Uint8Array(fs.readFileSync(filePath)))
-    console.log(db)
-    const res = db.exec(`select * from comments;`)
-    console.log(res)
-    return res[0].values
-    */
 })
+ipcMain.handle('insert', async(event, r)=>{
+    if (!lib.has(`SQL`)) {loadDb()}
+    const record = lib.get(`DB`).exec(`insert into comments(content, created) values('${r.content}', r.created);`)
+    console.log(record)
+    return record
+})
+ipcMain.handle('clear', async(event)=>{
+    lib.get(`DB`).exec(`delete from comments;`)
+})
+ipcMain.handle('delete', async(event, ids)=>{
+    lib.get(`DB`).exec(`begin;`)
+    for (const id of ids) {
+        lib.get(`DB`).exec(`delete from comments where id = ${id};`)
+    }
+    lib.get(`DB`).exec(`commit;`)
+})
+/*
+ipcMain.handle('delete', async(event, ids=null)=>{
+    console.debug(ids)
+    const isAll = (0===ids.length)
+    const msg = ((isAll) ? `つぶやきをすべて削除します。` : `選択したつぶやきを削除します。`) + `\n本当によろしいですか？`
+    if (confirm(msg)) {
+        console.debug('削除します。')
+        if (isAll) { console.debug('全件削除します。'); lib.get(`DB`).exec(`delete from comments;`) }
+        else {
+            console.debug('選択削除します。')
+            lib.get(`DB`).exec(`begin;`)
+            for (const id of ids) {
+                lib.get(`DB`).exec(`delete from comments where id = ${id};`)
+            }
+            lib.get(`DB`).exec(`commit;`)
+        }
+        console.debug(await this.dexie.comments.toArray())
+    }
+})
+*/
+ipcMain.handle('exportDb', async(event)=>{
+    return lib.get(`DB`).export()
+})
+
+
 
 /*
 ipcMain.handle('open', async (event) => {

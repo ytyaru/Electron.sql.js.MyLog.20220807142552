@@ -1,21 +1,4 @@
 const {remote,contextBridge,ipcRenderer} =  require('electron');
-//const initSqlJs = require('sql.js');
-//const fs = require('fs')
-//const initSqlJs = require('sql.js');
-//const initSqlJs = require('sql-wasm.js');
-/*
-const fs = require('fs')
-const path = require('path')
-const util = require('util')
-const initSqlJs = require('sql.js');
-*/
-//const initSqlJs = require('sql-wasm.js');
-//const initSqlJs = require('sql.js');
-//const initSqlJs = require('sql-wasm.js');
-//const initSqlJs = require('sql-wasm')
-//const {initSqlJs} = require('sql-wasm')
-//const initSqlJs = require('sql-wasm.js');
-//import createSqlWasm from "sql-wasm";
 window.addEventListener('DOMContentLoaded', () => {
     const replaceText = (selector, text) => {
         const element = document.getElementById(selector)
@@ -28,6 +11,15 @@ window.addEventListener('DOMContentLoaded', () => {
 
 contextBridge.exposeInMainWorld('myApi', {
     setup: ()=>{
+        document.querySelector('#post').addEventListener('click', async()=>{
+
+        })
+        document.querySelector('#delete').addEventListener('click', async()=>{
+
+        })
+        document.querySelector('#download').addEventListener('click', async()=>{
+
+        })
         /*
         document.querySelector('#open').addEventListener('click', async () => {
             console.debug(`openをclickした！`)
@@ -47,7 +39,11 @@ contextBridge.exposeInMainWorld('myApi', {
         console.log('setup()')
     },
     loadDb:async(filePath)=>await ipcRenderer.invoke('loadDb', filePath),
-    getComments:async(filePath)=>await ipcRenderer.invoke('getComments', filePath),
+    get:async()=>await ipcRenderer.invoke('get'),
+    insert:async(record)=>await ipcRenderer.invoke('insert', record),
+    clear:async()=>await ipcRenderer.invoke('delete'),
+    delete:async(ids)=>await ipcRenderer.invoke('delete', ids),
+    exportDb:async()=>await ipcRenderer.invoke('exportDb'),
     //loadDb:(filebuffer)=>initSqlJs().then((SQL)=>new SQL.Database(filebuffer)).catch(e=>console.error(e)),
     //loadSql:
     //loadDb:(filebuffer)=>initSqlJs().then((SQL)=>new SQL.Database(filebuffer)).catch(e=>console.error(e)),
