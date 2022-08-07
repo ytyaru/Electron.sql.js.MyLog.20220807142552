@@ -222,6 +222,8 @@ ${content}
         if (ua.indexOf("windows nt") !== -1) { return 'DOS' }
         return 'UNIX'
     }
+    async #makeDb() { return await window.myApi.exportDb() }
+    /*
     async #makeDb() {
         if (!this.SQL) { this.SQL = await initSqlJs({locateFile: file => `lib/sql.js/1.7.0/${file}`}) }
         const db = new this.SQL.Database();
@@ -230,6 +232,7 @@ ${content}
         db.exec(`COMMIT;`)
         return db.export()
     }
+    */
     async #makeTableComments(db) {
         db.exec(this.#createSqlComments())
         const cms = await this.db.dexie.comments.toArray()
