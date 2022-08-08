@@ -1,6 +1,9 @@
 label, legend, form, fieldset, button, input, textarea, select, option, output {
     font-size: calc(100vw / (var(--line-of-chars)));
     /*line-height: 1.0em;*/
+    color: var(--fg-color);
+    background-color: var(--bg-color);
+    border-color: var(--fg-color);
 }
 pre > code {
     font-size: calc(100vw / calc(var(--line-of-chars) * 2));
