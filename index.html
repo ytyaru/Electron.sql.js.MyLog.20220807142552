@@ -151,6 +151,20 @@ body {
 <ol>
 <li>テキストエリアに好きなテキストを入力する</li>
 <li><kbd>つぶやく</kbd>ボタンを押す</li>
+<li>DB保存されページに表示される</li>
+</ol>
+<h2>削除</h2>
+<ol>
+<li><kbd>削除</kbd>ボタンを押す</li>
+<li>つぶやき未選択なら全削除される</li>
+<li>つぶやきを1件以上未選択済みならそれらを削除する</li>
+</ol>
+
+<!--
+<h2>つぶやく</h2>
+<ol>
+<li>テキストエリアに好きなテキストを入力する</li>
+<li><kbd>つぶやく</kbd>ボタンを押す</li>
 <li>ページに表示される</li>
 </ol>
 <h2>ダウンロード</h2>
@@ -181,15 +195,18 @@ body {
 <li><kbd>削除</kbd>ボタンを押す</li>
 <li>選択したつぶやきが削除される</li>
 </ol>
+-->
 </details>
 
 <div>
 <textarea id="content" value="" placeholder="つぶやく内容またはDBファイルをドラッグ＆ドロップ" cols="40" rows="5"></textarea>
 <span>あと<span id="content-length"></span>字<span>
 <button id="post" type="button">つぶやく</button>
+<!--
 <button id="download" type="button">ダウンロード</button>
 <input type="file" id="file-input" value="アップロード">
 <input type="checkbox" id="is-over-write" disabled><label for="is-over-write">上書き許可</label>
+-->
 <button id="delete" type="button">削除</button>
 </div>
 <div id="post-list"></div>
