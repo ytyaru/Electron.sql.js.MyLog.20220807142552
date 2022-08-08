@@ -82,8 +82,9 @@ window.addEventListener('DOMContentLoaded', async(event) => {
         }
         */
         const ids = Array.from(document.querySelectorAll(`#post-list input[type=checkbox][name=delete]:checked`)).map(d=>parseInt(d.value))
-        console.debug(deletes)
-        window.myApi.delete(ids);
+        console.debug(ids)
+        //window.myApi.delete(ids);
+        db.delete(ids)
         /*
         //await db.delete(deletes)
         document.getElementById('post-list').innerHTML = await db.toHtml()
