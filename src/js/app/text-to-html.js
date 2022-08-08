@@ -19,14 +19,31 @@ class TextToHtml {
         // 同じ年なら月日だけ表示
         // それ以降なら年月日表示
         const d = new Date(created * 1000)
+        /*
         console.debug(this.now.getTime() - created)
         console.debug(this.now.getYear()===d.getYear(), this.now.getMonth()===d.getMonth(), d.getDate() < this.now.getDate())
         console.debug(this.now.getYear(), d.getYear(), this.now.getMonth(), d.getMonth(), d.getDate(), this.now.getDate())
+        const diff = this.now.getTime() - d.getTime()
+        const s = Math.floor(diff/1000)
+        const m = Math.floor(s / 60)
+        const h = Math.floor(m / 60)
+        const dates = Math.floor(h / 24)
+        console.debug(diff, s, m, h, dates)
+        */
+        const dates = Math.floor((this.now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24))
+        if (365 < dates) {return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`} // 一年以上前
+        else if (0 < dates) { // 一日以上
+            return `${(d.getMonth()+1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`
+        }
+        else { return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}` } // 当日
+        /*
         if (d.getYear() < this.now.getYear()) { return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}` } // 一年間以上
-        else if (this.now.getYear()===d.getYear() && this.now.getMonth()===d.getMonth() && d.getDate() < this.now.getDate()) {
+        //else if (this.now.getYear()===d.getYear() && this.now.getMonth()===d.getMonth() && d.getDate() < this.now.getDate()) {
+        else if (this.now.getYear()===d.getYear()) {
             return `${(d.getMonth()+1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`
         }
         else { return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}` } // 同じ日
+        */
     }
     static #toDeleteCheckbox(id) { return `<label><input type="checkbox" name="delete" value="${id}">❌<label>` }
 
