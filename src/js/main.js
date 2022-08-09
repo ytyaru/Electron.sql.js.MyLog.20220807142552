@@ -39,7 +39,6 @@ app.on('window-all-closed', function () {
 async function loadDb(filePath=`src/db/mylog.db`) {
     if (null === filePath) { filePath = `src/db/mylog.db` }
     if (!lib.has(`DB`)) {
-        const fs = require('fs')
         const SQL = await initSqlJs().catch(e=>console.error(e))
         lib.set(`SQL`, SQL)
         const db = new SQL.Database(new Uint8Array(fs.readFileSync(filePath)))
