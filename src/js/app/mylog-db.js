@@ -17,7 +17,6 @@ class MyLogDb {
         })
     }
     */
-    //async clear() { await this.dexie.comments.clear() }
     async clear() { await window.myApi.clear() }
     async delete(ids) {
         console.debug(ids)
@@ -27,20 +26,17 @@ class MyLogDb {
             console.debug('削除します。')
             if (isAll) { console.debug('全件削除します。'); await window.myApi.clear() }
             else { console.debug('選択削除します。'); await window.myApi.delete(ids) }
-            //if (isAll) { console.debug('全件削除します。'); await this.dexie.comments.clear() }
-            //else { console.debug('選択削除します。'); for (const id of ids) { await this.dexie.comments.delete(id) } }
-            //console.debug(await this.dexie.comments.toArray())
         }
     }
     async insert(content) {
-        //const content = document.getElementById('content').value
         if (!content) { alert('つぶやく内容をテキストエリアに入力してください。'); return; }
         if (this.LENGTH < content.length) { alert(`つぶやく内容は${this.LENGTH}字以内にしてください。`); return; }
         const match = content.match(/\r\n|\n/g)
         if (match && this.LINE < match.length) { alert(`つぶやく内容は${this.LINE}行以内にしてください。`); return; }
         const now = Math.floor(new Date().getTime() / 1000)
-        const r = window.myApi.insert({content:content, created:now});
-        return this.#insertHtml(r.id, r.content, r.created)
+        const r = await window.myApi.insert({content:content, created:now});
+        console.debug(r)
+        return TextToHtml.toHtml(r[0], r[1], r[2])
     }
     /*
     async insert(content, now) {

@@ -43,38 +43,30 @@ async function loadDb(filePath=`src/db/mylog.db`) {
         lib.set(`SQL`, SQL)
         const db = new SQL.Database(new Uint8Array(fs.readFileSync(filePath)))
         lib.set(`DB`, db)
-        console.log(db)
-        console.log(db.exec)
-        const res = db.exec(`select * from comments;`)
-        console.log(res)
     }
-    //console.log(lib)
     return lib.get(`DB`)
 }
 
 // ここではdb.execを参照できるが、return後では参照できない謎
 ipcMain.handle('loadDb', async(event, filePath=null) => {
-    console.log('----- loadDb ----- ', filePath)
+    console.debug('----- loadDb ----- ', filePath)
     return loadDb(filePath)
 })
 // db.execの実行結果を返すならOK
 ipcMain.handle('get', async(event) => {
-    console.log('----- get ----- ')
+    console.debug('----- get ----- ')
     if (!lib.has(`SQL`)) {
-        //await ipcRenderer.invoke('loadDb', filePath),
         loadDb()
     }
-    //console.log(lib)
-    //console.log(lib.get(`DB`))
     const res = lib.get(`DB`).exec(`select * from comments order by created desc;`)
-    //console.log(res)
     return res[0].values
 })
 ipcMain.handle('insert', async(event, r)=>{
     if (!lib.has(`SQL`)) {loadDb()}
-    const record = lib.get(`DB`).exec(`insert into comments(content, created) values('${r.content}', r.created);`)
-    console.log(record)
-    return record
+    console.debug(r)
+    lib.get(`DB`).exec(`insert into comments(content, created) values('${r.content}', ${r.created});`)
+    const res = lib.get(`DB`).exec(`select * from comments where created = ${r.created};`)
+    return res[0].values[0]
 })
 ipcMain.handle('clear', async(event)=>{
     lib.get(`DB`).exec(`delete from comments;`)
@@ -86,26 +78,6 @@ ipcMain.handle('delete', async(event, ids)=>{
     }
     lib.get(`DB`).exec(`commit;`)
 })
-/*
-ipcMain.handle('delete', async(event, ids=null)=>{
-    console.debug(ids)
-    const isAll = (0===ids.length)
-    const msg = ((isAll) ? `つぶやきをすべて削除します。` : `選択したつぶやきを削除します。`) + `\n本当によろしいですか？`
-    if (confirm(msg)) {
-        console.debug('削除します。')
-        if (isAll) { console.debug('全件削除します。'); lib.get(`DB`).exec(`delete from comments;`) }
-        else {
-            console.debug('選択削除します。')
-            lib.get(`DB`).exec(`begin;`)
-            for (const id of ids) {
-                lib.get(`DB`).exec(`delete from comments where id = ${id};`)
-            }
-            lib.get(`DB`).exec(`commit;`)
-        }
-        console.debug(await this.dexie.comments.toArray())
-    }
-})
-*/
 ipcMain.handle('exportDb', async(event)=>{
     return lib.get(`DB`).export()
 })
