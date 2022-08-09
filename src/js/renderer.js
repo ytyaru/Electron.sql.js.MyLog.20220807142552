@@ -101,7 +101,7 @@ window.addEventListener('DOMContentLoaded', async(event) => {
         }
         */
     })
-    document.querySelector('#download').addEventListener('click', async()=>{
+    document.querySelector('#download')?.addEventListener('click', async()=>{
         await downloader.download()
     })
 });
